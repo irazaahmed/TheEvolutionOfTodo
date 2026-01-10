@@ -44,10 +44,13 @@ Explicitly included:
   - Toggle task completion
 - Error handling expectations at API level
 - Assumptions about user identity as a data field only, not enforced
+- Data integrity safeguards (user ownership verification as referential integrity, not authentication enforcement)
+- JWT configuration placeholders (non-functional, no token operations in this phase)
 
 Not building:
-- Authentication or authorization logic
-- JWT validation or Better Auth integration
+- Active authentication or authorization logic
+- JWT token issuance, validation, or verification
+- Better Auth integration
 - Frontend UI or Next.js concerns
 - AI, chatbot, or LLM-related features
 - Kubernetes, Docker, or deployment automation
@@ -58,6 +61,7 @@ Out of scope clarifications:
 - User identity is treated as an external identifier passed via API paths, not verified
 - Security enforcement is deferred entirely to Phase II Part 2
 - UI and user experience concerns are deferred entirely to Phase II Part 3
+- No active authentication mechanisms operate in Phase II Part 1
 
 Completion definition:
 - The backend can persist Todo tasks in Neon PostgreSQL
@@ -159,6 +163,23 @@ As a user, I want to mark my tasks as complete or incomplete so that I can track
 
 - **Todo Task**: Represents a user's task with attributes including unique ID, title, description, completion status, creation timestamp, and user identifier
 - **User**: Represents a user with a unique identifier that establishes ownership of tasks
+
+## Security Considerations *(clarification for Phase II Part 1)*
+
+### Data Integrity vs. Authentication Enforcement
+- **Permitted Data Safeguards**: User ownership verification at the data layer (checking that a task belongs to the specified user) is permitted as a data integrity measure, not as authentication enforcement.
+- **Clarification**: API endpoints may verify that `task.user_id == user_id` parameter to maintain referential integrity, but this does not constitute active authentication or authorization enforcement.
+- **Scope Boundary**: This verification does not require validating the authenticity of the user_id; it merely ensures data consistency.
+
+### Configuration Placeholders
+- **JWT Settings Acceptance**: The presence of JWT-related configuration values (secret_key, algorithm, token expiration) is acceptable as non-functional placeholders in Phase II Part 1.
+- **No Active Usage**: These values must remain unused during Phase II Part 1 operations. No token generation, validation, or verification occurs in this phase.
+- **Future-Proofing**: These placeholders prepare the system for Phase II Part 2 without violating current phase boundaries.
+
+### Authentication Status Clarification
+- **Active Authentication Status**: Phase II Part 1 implements no active authentication mechanisms.
+- **User Identity Treatment**: User identifiers are accepted as provided in API parameters without validation or verification.
+- **Enforcement Deferral**: Complete authentication and authorization enforcement remains deferred to Phase II Part 2 as originally specified.
 
 ## Success Criteria *(mandatory)*
 
