@@ -28,7 +28,8 @@
       "Bash(rm -rf frontend-temp)",
       "Bash(sudo rm -rf frontend-temp)",
       "Bash(mv frontend frontend-old)",
-      "Bash(npx create-next-app@16.0.10 frontend --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --no-react-compiler)"
+      "Bash(npx create-next-app@16.0.10 frontend --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --no-react-compiler)",
+      "Bash(pwsh -Command \".specify/scripts/powershell/setup-plan.ps1 -Json\")"
     ]
   }
 }

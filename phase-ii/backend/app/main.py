@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.api.v1.endpoints import tasks
+from app.api.v1.endpoints.auth import router as auth_router
 from app.core.config import settings
 from app.exceptions import TaskNotFoundError, ValidationError as AppValidationError
 from pydantic import ValidationError as PydanticValidationError
@@ -29,6 +30,7 @@ app.add_middleware(
 
 # Include API routes
 app.include_router(tasks.router, prefix="/api/v1", tags=["tasks"])
+app.include_router(auth_router, prefix="/api/v1/auth", tags=["auth"])
 
 
 @app.exception_handler(TaskNotFoundError)
