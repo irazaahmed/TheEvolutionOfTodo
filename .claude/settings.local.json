@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -ExecutionPolicy Bypass -File .specify/scripts/powershell/setup-plan.ps1 -Json)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(dir:*)",
+      "Bash(powershell -ExecutionPolicy Bypass -File:*)",
+      "Bash(python test_us3.py)",
+      "Bash(python simple_validation.py)",
+      "Bash(python debug_test.py)",
+      "Bash(cat .claude/skills/*.md)",
+      "Bash(mkdir -p specs/002-phase-2-overview/checklists)",
+      "Bash(source .venv/bin/activate)",
+      "Bash(python -c \"from src.main import app; print\\(''Backend imports successfully!''\\)\")",
+      "Bash(.specify/scripts/bash/setup-plan.sh)",
+      "Bash(npm install --legacy-peer-deps)",
+      "Bash(npm install next@14.2.15 react@18.3.1 react-dom@18.3.1)",
+      "Bash(npm audit)",
+      "Bash(npm i --package-lock-only)",
+      "Bash(npm audit fix)",
+      "Bash(npm install)",
+      "Bash(rm -rf frontend/node_modules frontend/package-lock.json frontend/.next)",
+      "Bash(sudo mv frontend frontend-old)",
+      "Bash(npx create-next-app@16.0.10 frontend-temp --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\")",
+      "Bash(npx create-next-app@16.0.10 frontend-temp --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --no-react-compiler)",
+      "Bash(rm -rf frontend-temp)",
+      "Bash(sudo rm -rf frontend-temp)",
+      "Bash(mv frontend frontend-old)",
+      "Bash(npx create-next-app@16.0.10 frontend --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --no-react-compiler)"
+    ]
+  }
+}
