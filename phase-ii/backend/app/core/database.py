@@ -25,9 +25,6 @@ async_engine = create_async_engine(
     echo=False,  # Set to True for SQL query logging
     pool_pre_ping=True,  # Verify connections before use
     pool_recycle=300,  # Recycle connections after 5 minutes
-    # Additional async-specific options
-    pool_pre_ping=True,
-    pool_recycle=300,
     pool_timeout=40,
     max_overflow=0,
 )
