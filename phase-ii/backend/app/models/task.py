@@ -8,7 +8,7 @@ class TaskBase(SQLModel):
     title: str = Field(min_length=1, max_length=255)
     description: Optional[str] = Field(default=None, max_length=1000)
     completed: bool = Field(default=False)
-    user_id: uuid.UUID = Field(foreign_key="user.id")
+    user_id: uuid.UUID = Field(foreign_key="user.id")  # Changed back to use 'user' table
 
 
 class Task(TaskBase, table=True):

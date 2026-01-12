@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authAPI } from '../../../src/lib/api';
-import { setToken } from '../../../src/lib/auth';
-import SignInForm from '../../../src/components/auth/SignInForm';
+import { signIn } from '../../../src/lib/better-auth-client';
 
 const SignInPage = () => {
   const [error, setError] = useState<string | null>(null);
@@ -18,21 +17,17 @@ const SignInPage = () => {
 
     try {
       const response = await authAPI.login(email, password);
-      const { access_token, user_id } = response.data;
 
-      // Store the token
-      setToken(access_token);
-
-      // Redirect to dashboard
-      router.push('/dashboard');
-      router.refresh(); // Refresh to update auth state
-    } catch (err: any) {
-      console.error('Sign in error:', err);
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
+      if (response.data) {
+        // Redirect to dashboard
+        router.push('/dashboard');
+        router.refresh(); // Refresh to update auth state
       } else {
         setError('Invalid credentials. Please try again.');
       }
+    } catch (err: any) {
+      console.error('Sign in error:', err);
+      setError('Invalid credentials. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -46,7 +41,47 @@ const SignInPage = () => {
           <p className="text-gray-600 dark:text-gray-300">Sign in to your account to continue</p>
         </div>
 
-        <SignInForm onSubmit={handleSignIn} loading={loading} />
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          const formData = new FormData(e.currentTarget);
+          const email = formData.get('email') as string;
+          const password = formData.get('password') as string;
+          handleSignIn(email, password);
+        }}>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+            >
+              {loading ? 'Signing in...' : 'Sign In'}
+            </button>
+          </div>
+        </form>
 
         {error && (
           <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">

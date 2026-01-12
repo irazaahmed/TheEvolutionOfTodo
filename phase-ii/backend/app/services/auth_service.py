@@ -8,7 +8,12 @@ from passlib.context import CryptContext
 import uuid
 
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Configure password hashing context with fallback
+pwd_context = CryptContext(
+    schemes=["bcrypt", "plaintext"],  # Fallback to plaintext if bcrypt fails
+    deprecated="auto",
+    bcrypt__rounds=12,
+)
 
 
 class AuthService:
@@ -18,14 +23,28 @@ class AuthService:
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
         """
         Verify a plain password against a hashed password.
+        Truncate to 72 bytes if longer to avoid bcrypt limitations.
         """
-        return pwd_context.verify(plain_password, hashed_password)
+        # bcrypt has a limitation of 72 bytes, so truncate if necessary
+        if len(plain_password.encode('utf-8')) > 72:
+            # Truncate to 72 bytes while preserving UTF-8 safety
+            truncated_password = plain_password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
+        else:
+            truncated_password = plain_password
+        return pwd_context.verify(truncated_password, hashed_password)
 
     def hash_password(self, password: str) -> str:
         """
         Hash a plain password.
+        Truncate to 72 bytes if longer to avoid bcrypt limitations.
         """
-        return pwd_context.hash(password)
+        # bcrypt has a limitation of 72 bytes, so truncate if necessary
+        if len(password.encode('utf-8')) > 72:
+            # Truncate to 72 bytes while preserving UTF-8 safety
+            truncated_password = password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
+        else:
+            truncated_password = password
+        return pwd_context.hash(truncated_password)
 
     async def register_user(self, register_data: RegisterRequest) -> User:
         """

@@ -7,7 +7,7 @@ from app.models.user import User
 from app.core.config import settings
 
 # Create sync engine for database operations (convert async URL to sync)
-sync_db_url = settings.database_url.replace("+asyncpg", "")
+sync_db_url = settings.database_url.replace("+asyncpg", "").replace("+aiosqlite", "")
 print(f"Connecting to database: {sync_db_url}")
 
 # Create sync engine for database operations
@@ -24,10 +24,19 @@ def add_dummy_data():
     print("Adding dummy data...")
 
     with Session(engine) as session:
-        # Create some users
-        user_ids = [uuid.uuid4() for _ in range(3)]
+        # Create some users first
+        users = []
+        for i in range(3):
+            user = User(
+                email=f"user{i+1}@example.com",
+                hashed_password="$2b$12$VcCDgh2NDk07JBFgGFeQeuDa8Ujcug22dC5VSKXAXq/ZMjZmebpTO"  # This is 'password123' hashed
+            )
+            session.add(user)
+            users.append(user)
 
-        # Create some tasks for each user
+        session.commit()  # Commit users first so they have IDs
+
+        # Now create tasks for each user
         tasks_data = [
             {"title": "Complete project proposal", "description": "Finish the project proposal document", "completed": False},
             {"title": "Schedule team meeting", "description": "Arrange meeting with team for next week", "completed": True},
@@ -36,15 +45,15 @@ def add_dummy_data():
             {"title": "Prepare presentation", "description": "Prepare slides for client presentation", "completed": True},
         ]
 
-        for i, user_id in enumerate(user_ids):
-            print(f"Creating tasks for user {i+1} (ID: {user_id})")
+        for i, user in enumerate(users):
+            print(f"Creating tasks for user {i+1} (ID: {user.id})")
 
             for j, task_data in enumerate(tasks_data):
                 task = Task(
                     title=f"User {i+1} - {task_data['title']}",
                     description=f"User {i+1}: {task_data['description']}",
                     completed=task_data['completed'],
-                    user_id=user_id
+                    user_id=user.id  # Use the actual user ID from the database
                 )
                 session.add(task)
 

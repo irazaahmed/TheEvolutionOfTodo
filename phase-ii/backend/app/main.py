@@ -4,11 +4,15 @@ from fastapi.responses import JSONResponse
 from app.api.v1.endpoints import tasks
 from app.api.v1.endpoints.auth import router as auth_router
 from app.core.config import settings
+from app.core.database import async_engine
 from app.exceptions import TaskNotFoundError, ValidationError as AppValidationError
 from pydantic import ValidationError as PydanticValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from datetime import datetime
-
+from sqlmodel import SQLModel
+import asyncio
+from app.models.user import User
+from app.models.task import Task
 
 app = FastAPI(
     title="Todo API",
@@ -28,10 +32,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include API routes
-app.include_router(tasks.router, prefix="/api/v1", tags=["tasks"])
-app.include_router(auth_router, prefix="/api/v1/auth", tags=["auth"])
-
+# Include API routes with user_id in path - this will be handled in the tasks router
+app.include_router(tasks.router, prefix="/api", tags=["tasks"])
+# Include auth routes separately
+app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 
 @app.exception_handler(TaskNotFoundError)
 async def handle_task_not_found(request: Request, exc: TaskNotFoundError):
@@ -101,8 +105,10 @@ def read_root():
 
 @app.on_event("startup")
 async def startup_event():
-    # Any startup tasks can go here
-    pass
+    # Create database tables on startup
+    async with async_engine.begin() as conn:
+        # This will create all tables defined in the SQLModel models
+        await conn.run_sync(SQLModel.metadata.create_all)
 
 
 @app.on_event("shutdown")

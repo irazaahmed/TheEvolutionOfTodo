@@ -11,7 +11,7 @@ import uuid
 
 class JWTService:
     """
-    Service class to handle JWT token operations including creation,
+    Service class to handle legacy JWT token operations including creation,
     verification, and user identity extraction.
     """
 
@@ -32,7 +32,7 @@ class JWTService:
     @staticmethod
     def verify_token(token: str) -> Optional[Dict[str, Any]]:
         """
-        Verify a JWT token and return the decoded payload if valid.
+        Verify a legacy JWT token and return the decoded payload if valid.
 
         Args:
             token: JWT token string to verify
@@ -57,7 +57,7 @@ class JWTService:
     @staticmethod
     def extract_user_id_from_token(token: str) -> Optional[uuid.UUID]:
         """
-        Extract user ID from a JWT token.
+        Extract user ID from a legacy JWT token.
 
         Args:
             token: JWT token string
@@ -81,7 +81,7 @@ class JWTService:
     @staticmethod
     def create_token_data(user_id: uuid.UUID) -> Dict[str, Any]:
         """
-        Create the data payload for a JWT token.
+        Create the data payload for a legacy JWT token.
 
         Args:
             user_id: User ID to include in the token

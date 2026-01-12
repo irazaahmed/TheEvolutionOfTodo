@@ -9,6 +9,9 @@ class UserBase(SQLModel):
 
 
 class User(UserBase, table=True):
+    # Use default table name 'user' - SQLModel/SQLAlchemy will quote it appropriately
+    # to handle PostgreSQL reserved keyword issue
+
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True)
     email: str = Field(unique=True, nullable=False)
     hashed_password: str = Field(nullable=False)

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import ProtectedRoute from '../../src/components/ProtectedRoute';
 import { taskAPI } from '../../src/lib/api';
+import { authClient } from '../../src/lib/better-auth-client';
 import TaskList from '../../src/components/tasks/TaskList';
 import TaskCreateForm from '../../src/components/tasks/TaskCreateForm';
 
@@ -10,16 +11,32 @@ const DashboardPage = () => {
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
-  // Fetch tasks on component mount
+  // Fetch user ID and tasks on component mount
   useEffect(() => {
-    fetchTasks();
+    const fetchUserData = async () => {
+      try {
+        const session = await authClient.getSession();
+        if (session?.user) {
+          setUserId(session.user.id);
+          await fetchTasks(session.user.id);
+        } else {
+          setError('User not authenticated');
+        }
+      } catch (err) {
+        console.error('Error getting user session:', err);
+        setError('Failed to get user session');
+      }
+    };
+
+    fetchUserData();
   }, []);
 
-  const fetchTasks = async () => {
+  const fetchTasks = async (userId: string) => {
     try {
       setLoading(true);
-      const response = await taskAPI.getTasks();
+      const response = await taskAPI.getTasks(userId);
       setTasks(response.data);
       setError(null);
     } catch (err: any) {
@@ -31,8 +48,13 @@ const DashboardPage = () => {
   };
 
   const handleCreateTask = async (title: string, description?: string) => {
+    if (!userId) {
+      setError('User not authenticated');
+      return;
+    }
+
     try {
-      const response = await taskAPI.createTask(title, description);
+      const response = await taskAPI.createTask(userId, title, description);
       setTasks([...tasks, response.data]);
     } catch (err: any) {
       console.error('Error creating task:', err);
@@ -41,8 +63,13 @@ const DashboardPage = () => {
   };
 
   const handleUpdateTask = async (taskId: string, title: string, description?: string, completed?: boolean) => {
+    if (!userId) {
+      setError('User not authenticated');
+      return;
+    }
+
     try {
-      const response = await taskAPI.updateTask(taskId, title, description, completed);
+      const response = await taskAPI.updateTask(userId, taskId, title, description, completed);
       setTasks(tasks.map(task => task.id === taskId ? response.data : task));
     } catch (err: any) {
       console.error('Error updating task:', err);
@@ -51,8 +78,13 @@ const DashboardPage = () => {
   };
 
   const handleDeleteTask = async (taskId: string) => {
+    if (!userId) {
+      setError('User not authenticated');
+      return;
+    }
+
     try {
-      await taskAPI.deleteTask(taskId);
+      await taskAPI.deleteTask(userId, taskId);
       setTasks(tasks.filter(task => task.id !== taskId));
     } catch (err: any) {
       console.error('Error deleting task:', err);
@@ -61,8 +93,13 @@ const DashboardPage = () => {
   };
 
   const handleToggleTask = async (taskId: string) => {
+    if (!userId) {
+      setError('User not authenticated');
+      return;
+    }
+
     try {
-      const response = await taskAPI.toggleTaskCompletion(taskId);
+      const response = await taskAPI.toggleTaskCompletion(userId, taskId);
       setTasks(tasks.map(task => task.id === taskId ? response.data : task));
     } catch (err: any) {
       console.error('Error toggling task:', err);
