@@ -33,7 +33,19 @@
       "Bash(pip install -r requirements.txt)",
       "Bash(python3 -m venv venv)",
       "Bash(source venv/bin/activate)",
-      "Bash(npm run dev)"
+      "Bash(npm run dev)",
+      "Bash(find /mnt/d/Code/GIAIC/Quarter-4-hackathons/the-evolution-of-todo/phase-ii/backend/app/models/ -name \"*.py\" -exec grep -l \"users\\\\|tasks\" {} ;)",
+      "Bash(python -c \"from app.models import User, Task; print\\(''Imports successful''\\)\")",
+      "Bash(python3 -c \"from app.models import User, Task; print\\(''Imports successful''\\)\")",
+      "Bash(python3 -m py_compile app/models/user.py app/models/task.py app/models/__init__.py)",
+      "Bash(find . -path \"./node_modules\" -prune -o -name \"*.md\" -type f -exec grep -l \"Phase II\\\\|System Specification\" {} ;)",
+      "Bash(find ./phase-ii/frontend -name \"*.tsx\" -type f -exec grep -l \"login\\\\|register\\\\|signUp\\\\|signIn\" {} ;)",
+      "Bash(find ./phase-ii -name \"*.md\" -type f -exec grep -l \"authentication\\\\|JWT\\\\|token\\\\|issue\" {} ;)",
+      "Bash(find ./phase-ii/frontend -name \"*.tsx\" -type f -exec grep -l \"ProtectedRoute\\\\|protected\" {} ;)",
+      "Bash(find ./phase-ii/frontend/src -name \"*.ts\" -o -name \"*.tsx\" -exec grep -l \"isAuthenticated\" {} ;)",
+      "Bash(find ./phase-ii/frontend/src -name \"*.ts\" -exec grep -l \"isAuthenticated\" {} ;)",
+      "Bash(find ./phase-ii/backend -name \"*.py\" -exec grep -l \"tasks\" {} ;)",
+      "Bash(find ./phase-ii/frontend/app -name \"*.tsx\" -exec grep -l \"auth\\\\|sign\" {} ;)"
     ]
   }
 }
